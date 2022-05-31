@@ -2,6 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:news/screens/all.dart';
 
 void main() {
   runApp(const App());
@@ -13,12 +14,9 @@ class App extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp(
+    return MaterialApp(
       title: "Beautified Hacker News",
-      theme: CupertinoThemeData(
-          textTheme: CupertinoTextThemeData(
-              textStyle:
-                  TextStyle(fontFamily: "Pretendard", color: Colors.white))),
+      theme: ThemeData(fontFamily: "Pretendard"),
       home: HomeScreen(),
     );
   }
@@ -51,24 +49,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icon(CupertinoIcons.square_list), label: "Show")
           ]),
       tabBuilder: (BuildContext context, int index) => CupertinoTabView(
-        builder: (context) => CupertinoPageScaffold(
-          backgroundColor: Colors.black,
-          child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 72.0, bottom: 12.0),
-                    child: Text(
-                      "Hacker News $index",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 32.0),
-                    ),
-                  )
-                ],
-              )),
-        ),
-      ),
+          builder: (context) => DefaultTextStyle(
+              style: TextStyle(color: Colors.white), child: AllPage())),
     );
   }
 }
