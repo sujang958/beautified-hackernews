@@ -38,7 +38,7 @@ class _AllPageState extends State<AllPage> {
                       backgroundColor: Colors.grey[900],
                       onRefresh: () async {},
                       child: ListView.builder(
-                        padding: EdgeInsets.only(top: 12.0),
+                          padding: EdgeInsets.only(top: 12.0),
                           itemBuilder: ((context, index) => GestureDetector(
                               onTap: () => Navigator.push(
                                   context,
@@ -52,18 +52,30 @@ class _AllPageState extends State<AllPage> {
                                         CrossAxisAlignment.start,
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      Hero(tag: "__news_title", child: Text(
-                                        "Varo, First Chartered Neobank, Could Run Out of Money by End of Year",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 18.0,
-                                            decoration: TextDecoration.none, color: Colors.white, fontFamily: "Pretendard"),
-                                      )),
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.symmetric(vertical: 2.5),
-                                        child: Text(
-                                            "by mooreds  |  +1 points  |  0 comments", style: TextStyle(fontFamily: "Pretendard"),),
+                                      Hero(
+                                          tag: "__news_title",
+                                          child: Text(
+                                            "Varo, First Chartered Neobank, Could Run Out of Money by End of Year",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 18.0,
+                                                decoration: TextDecoration.none,
+                                                color: Colors.white,
+                                                fontFamily: "Pretendard"),
+                                          )),
+                                      Hero(
+                                        tag: "__news_info",
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 2.5),
+                                          child: Text(
+                                            "by mooreds  |  +1 points  |  0 comments",
+                                            style: TextStyle(
+                                                fontFamily: "Pretendard", decoration: TextDecoration.none,
+                                                color: Colors.white,
+                                                fontSize: 14.2),
+                                          ),
+                                        ),
                                       ),
                                     ],
                                   )))),

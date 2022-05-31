@@ -40,7 +40,18 @@ class _DetailScreenState extends State<DetailScreen> {
                         fontFamily: "Pretendard"),
                   )),
               Padding(padding: EdgeInsets.symmetric(vertical: 3.0)),
-              Text("by mooreds  |  +1 points  |  0 comments"),
+              Hero(
+                tag: "__news_info",
+                child: Text(
+                  "by mooreds  |  +1 points  |  0 comments",
+                  style: TextStyle(
+                    fontFamily: "Pretendard",
+                    decoration: TextDecoration.none,
+                    color: Colors.white,
+                    fontSize: 14.4,
+                  ),
+                ),
+              ),
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 22.0),
                 child: CupertinoButton(
@@ -85,7 +96,13 @@ But if that same law says you can get attorneys’ fees too, the company knows t
 Lastly, let’s just say I’ve done an arbitration or two with a home warranty company. They don’t make money by paying out claims! '''),
                           ),
                           CupertinoButton(
-                              child: Text("View reply", style: TextStyle(fontSize: 15.8),), onPressed: () {}, padding: EdgeInsets.symmetric(vertical: 3.0, horizontal: 18.0)),
+                              child: Text(
+                                "View reply",
+                                style: TextStyle(fontSize: 15.8),
+                              ),
+                              onPressed: () {},
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 3.0, horizontal: 18.0)),
                         ],
                       ),
                     ),
