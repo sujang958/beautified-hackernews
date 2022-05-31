@@ -50,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ]),
       tabBuilder: (BuildContext context, int index) => CupertinoTabView(
           builder: (context) => DefaultTextStyle(
-              style: TextStyle(color: Colors.white), child: AllPage())),
+              style: TextStyle(color: Colors.white, fontFamily: "Pretendard"), child: AllPage())),
     );
   }
 }
