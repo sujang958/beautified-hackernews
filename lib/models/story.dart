@@ -4,6 +4,7 @@ import 'package:news/models/comment.dart';
 import 'package:http/http.dart' as http;
 
 final TopStoriesUri = 'https://hacker-news.firebaseio.com/v0/topstories.json';
+final StoryUri = 'https://hacker-news.firebaseio.com/v0/item';
 
 class Story {
   final String by;
@@ -34,12 +35,16 @@ class Story {
   }
 }
 
-Future<Story> fetchAlbum() async {
+Future<List<Story>> fetchTopStories() async {
   final response = await http.get(Uri.parse(TopStoriesUri));
-  final json = jsonDecode(response.body);
-
   if (response.statusCode == 200) {
-    return Story.fromJson(json);
+    final List<int> storyIds = jsonDecode(response.body);
+    final List<http.Response> storyResponses = await Future.wait(
+        storyIds.map((id) => http.get(Uri.parse('$StoryUri/$id'))));
+
+    return storyResponses
+        .map((json) => Story.fromJson(jsonDecode(json.body)))
+        .toList();
   } else {
     throw Exception('Failed to load stories');
   }

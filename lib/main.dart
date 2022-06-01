@@ -2,6 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:news/models/story.dart';
 import 'package:news/screens/all.dart';
 
 void main() {
@@ -11,7 +12,6 @@ void main() {
 class App extends StatelessWidget {
   const App({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -32,6 +32,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final CupertinoTabController tabController = CupertinoTabController();
 
+  late Future<List<Story>> TopStories;
+
   @override
   Widget build(BuildContext context) {
     return CupertinoTabScaffold(
@@ -50,7 +52,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ]),
       tabBuilder: (BuildContext context, int index) => CupertinoTabView(
           builder: (context) => DefaultTextStyle(
-              style: TextStyle(color: Colors.white, fontFamily: "Pretendard"), child: AllPage())),
+              style: TextStyle(color: Colors.white, fontFamily: "Pretendard"),
+              child: AllPage())),
     );
   }
 }
