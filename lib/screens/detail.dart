@@ -43,7 +43,7 @@ class _DetailScreenState extends State<DetailScreen> {
               Hero(
                 tag: "__news_info",
                 child: Text(
-                  "by mooreds  |  +1 points  |  0 comments",
+                  "by mooreds  |  1 points  |  0 comments",
                   style: TextStyle(
                     fontFamily: "Pretendard",
                     decoration: TextDecoration.none,

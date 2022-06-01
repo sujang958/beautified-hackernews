@@ -69,7 +69,7 @@ class _AllPageState extends State<AllPage> {
                                           padding: EdgeInsets.symmetric(
                                               vertical: 2.5),
                                           child: Text(
-                                            "by mooreds  |  +1 points  |  0 comments",
+                                            "by mooreds  |  1 points  |  0 comments",
                                             style: TextStyle(
                                                 fontFamily: "Pretendard", decoration: TextDecoration.none,
                                                 color: Colors.white,
