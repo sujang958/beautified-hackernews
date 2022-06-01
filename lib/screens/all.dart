@@ -16,6 +16,7 @@ class AllPage extends StatefulWidget {
 }
 
 class _AllPageState extends State<AllPage> {
+  // todo: improve story speed or show loading indicator 
   late Stream<Story> topStoryStream;
 
   final List<Story> stories = [];
