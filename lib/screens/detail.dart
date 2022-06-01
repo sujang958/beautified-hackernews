@@ -49,6 +49,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     decoration: TextDecoration.none,
                     color: Colors.white,
                     fontSize: 14.4,
+                    fontWeight: FontWeight.w500
                   ),
                 ),
               ),

@@ -73,7 +73,8 @@ class _AllPageState extends State<AllPage> {
                                             style: TextStyle(
                                                 fontFamily: "Pretendard", decoration: TextDecoration.none,
                                                 color: Colors.white,
-                                                fontSize: 14.2),
+                                                fontSize: 14.2,
+                                                fontWeight: FontWeight.w500),
                                           ),
                                         ),
                                       ),
