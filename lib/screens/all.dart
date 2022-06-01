@@ -1,7 +1,10 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:news/models/item.dart';
 import 'package:news/screens/detail.dart';
 
 class AllPage extends StatefulWidget {
@@ -12,6 +15,14 @@ class AllPage extends StatefulWidget {
 }
 
 class _AllPageState extends State<AllPage> {
+  late Future<List<Story>> topStories;
+
+  @override
+  void initState() {
+    super.initState();
+    topStories = fetchTopStories();
+  }
+
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
@@ -32,66 +43,120 @@ class _AllPageState extends State<AllPage> {
                       ),
                     ),
                   ),
+                  // Expanded(
+                  //   child: RefreshIndicator(
+                  //     color: Colors.white,
+                  //     backgroundColor: Colors.grey[900],
+                  //     onRefresh: () async {},
+                  //     // child: ListView.builder(
+                  //     //     padding: EdgeInsets.only(top: 12.0),
+                  //     //     itemBuilder: ((context, index) => GestureDetector(
+                  //     //         onTap: () => Navigator.push(
+                  //     //             context,
+                  //     //             CupertinoPageRoute(
+                  //     //               builder: (context) => DetailScreen(),
+                  //     //             )),
+                  //     //         child: Padding(
+                  //     //             padding: EdgeInsets.symmetric(vertical: 12.0),
+                  //     //             child: Column(
+                  //     //               crossAxisAlignment:
+                  //     //                   CrossAxisAlignment.start,
+                  //     //               mainAxisAlignment: MainAxisAlignment.start,
+                  //     //               children: [
+                  //     //                 Hero(
+                  //     //                     tag: "__news_title",
+                  //     //                     child: Text(
+                  //     //                       "Varo, First Chartered Neobank, Could Run Out of Money by End of Year",
+                  //     //                       style: TextStyle(
+                  //     //                           fontWeight: FontWeight.w600,
+                  //     //                           fontSize: 18.0,
+                  //     //                           decoration: TextDecoration.none,
+                  //     //                           color: Colors.white,
+                  //     //                           fontFamily: "Pretendard"),
+                  //     //                     )),
+                  //     //                 Hero(
+                  //     //                   tag: "__news_info",
+                  //     //                   child: Padding(
+                  //     //                     padding: EdgeInsets.symmetric(
+                  //     //                         vertical: 2.5),
+                  //     //                     child: Text(
+                  //     //                       "by mooreds  |  1 points  |  0 comments",
+                  //     //                       style: TextStyle(
+                  //     //                           fontFamily: "Pretendard",
+                  //     //                           decoration: TextDecoration.none,
+                  //     //                           color: Colors.white,
+                  //     //                           fontSize: 14.2,
+                  //     //                           fontWeight: FontWeight.w500),
+                  //     //                     ),
+                  //     //                   ),
+                  //     //                 ),
+                  //     //               ],
+                  //     //             )))),
+                  //     //     itemCount: 1),
+                  //   ),
+                  // ),
                   Expanded(
-                    child: RefreshIndicator(
-                      color: Colors.white,
-                      backgroundColor: Colors.grey[900],
-                      onRefresh: () async {},
-                      child: ListView.builder(
-                          padding: EdgeInsets.only(top: 12.0),
-                          itemBuilder: ((context, index) => GestureDetector(
-                              onTap: () => Navigator.push(
-                                  context,
-                                  CupertinoPageRoute(
-                                    builder: (context) => DetailScreen(),
-                                  )),
-                              child: Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 12.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Hero(
-                                          tag: "__news_title",
-                                          child: Text(
-                                            "Varo, First Chartered Neobank, Could Run Out of Money by End of Year",
+                      child: FutureBuilder<List<Story>>(
+                    builder: ((context, snapshot) {
+                      if (snapshot.hasData) {
+                        List<Story>? stories = snapshot.data;
+                        if (stories != null) {
+                          return ListView.builder(
+                            padding: EdgeInsets.only(top: 12.0),
+                            itemBuilder: ((context, index) {
+                              Story story = stories.elementAt(index);
+                              return GestureDetector(
+                                  onTap: () => Navigator.push(
+                                      context,
+                                      CupertinoPageRoute(
+                                        builder: (context) => DetailScreen(),
+                                      )),
+                                  child: Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 12.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            story.title,
                                             style: TextStyle(
                                                 fontWeight: FontWeight.w600,
                                                 fontSize: 18.0,
                                                 decoration: TextDecoration.none,
                                                 color: Colors.white,
                                                 fontFamily: "Pretendard"),
-                                          )),
-                                      Hero(
-                                        tag: "__news_info",
-                                        child: Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 2.5),
-                                          child: Text(
-                                            "by mooreds  |  1 points  |  0 comments",
-                                            style: TextStyle(
-                                                fontFamily: "Pretendard",
-                                                decoration: TextDecoration.none,
-                                                color: Colors.white,
-                                                fontSize: 14.2,
-                                                fontWeight: FontWeight.w500),
                                           ),
-                                        ),
-                                      ),
-                                    ],
-                                  )))),
-                          itemCount: 1),
-                    ),
-                  ),
-                  FutureBuilder(
-                    builder: ((context, snapshot) {
-                      if (snapshot.hasData) {
-                        print(snapshot.data);
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 2.5),
+                                            child: Text(
+                                              "by ${story.by}  |  ${story.score} points  |  ${story.comments.length} comments",
+                                              style: TextStyle(
+                                                  fontFamily: "Pretendard",
+                                                  decoration:
+                                                      TextDecoration.none,
+                                                  color: Colors.white,
+                                                  fontSize: 14.2,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                          ),
+                                        ],
+                                      )));
+                            }),
+                            itemCount: stories.length,
+                          );
+                        }
                       }
-                      return Text("I");
+
+                      return CupertinoActivityIndicator(
+                        radius: 14.0,
+                      );
                     }),
-                  )
+                    future: topStories,
+                  )),
                 ],
               )),
         ));

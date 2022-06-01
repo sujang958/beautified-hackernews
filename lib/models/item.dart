@@ -46,11 +46,13 @@ class Story extends Item {
     return Story(
       id: json['id'],
       by: json['by'],
-      comments: List.from(json['kids']).map((kid) => Comment(id: kid)).toList(),
+      comments: json['kids'] == null
+          ? []
+          : List.from(json['kids']).map((kid) => Comment(id: kid)).toList(),
       score: json['score'],
       time: json['time'],
       title: json['title'],
-      url: json['url'],
+      url: json['url'] ?? '',
     );
   }
 }
@@ -96,10 +98,20 @@ Future<List<Story>> fetchTopStories() async {
   final List<dynamic> topStoryIds = jsonDecode(topStoryResponse.body);
   final storyResponses = await Future.wait(
       topStoryIds.map((id) => http.get(Uri.parse('$storyUri/$id.json'))));
-  
+
   return storyResponses
       .map((response) => jsonDecode(response.body))
-      .where((item) => item.type == "story")
+      .where((item) => item['type'] == "story")
       .map((json) => Story.fromJson(json))
       .toList();
+}
+
+Future<Story> fetchStory({required int id}) async {
+  final storyResponse = await http.get(Uri.parse('$storyUri/$id.json'));
+
+  if (storyResponse.statusCode >= 400) {
+    throw Exception("Can't fetch stories!");
+  }
+
+  return Story.fromJson(jsonDecode(storyResponse.body));
 }
