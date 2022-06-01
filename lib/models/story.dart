@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:news/models/comment.dart';
 import 'package:http/http.dart' as http;
 
 import 'abstract/item.dart';
@@ -31,7 +30,7 @@ class Story extends Item {
     return Story(
       id: json['id'],
       by: json['by'],
-      commentIds: json['kids'] ?? [],
+      commentIds: json['kids'] == null ? <int>[] : List.from(json['kids']),
       score: json['score'],
       time: json['time'],
       title: json['title'],
@@ -56,8 +55,8 @@ Stream<Story> fetchTopStories() async* {
       .map((response) => jsonDecode(response.body))
       .where((item) => item['type'] == "story")
       .map((json) => Story.fromJson(json))) {
-        yield story;
-      }
+    yield story;
+  }
 }
 
 Future<Story> fetchStory({required int id}) async {

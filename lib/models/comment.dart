@@ -26,18 +26,18 @@ class Comment extends Item {
         id: json['id'],
         by: json['by'],
         time: json['time'],
-        commentIds: json['kids'] ?? [],
+        commentIds: json['kids'] == null ? [] : List.from(json['kids']),
         parentId: json['parent'],
         comment: json['text']);
   }
 }
 
-Future<Comment> fetchComment(int id) async {
+Future<Comment> fetchComment({required int id}) async {
   final commentResponse = await http.get(Uri.parse('$commentUri/$id.json'));
 
   if (commentResponse.statusCode >= 400) {
     throw Exception("Can't fetch the comment!");
   }
-
+  
   return Comment.fromJson(jsonDecode(commentResponse.body));
 }
