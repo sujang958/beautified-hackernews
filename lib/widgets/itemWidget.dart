@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:news/models/item.dart';
+import 'package:news/models/story.dart';
 import 'package:news/screens/detail.dart';
 
 class ItemWidget extends StatefulWidget {
@@ -40,7 +40,7 @@ class _ItemWidgetState extends State<ItemWidget> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 2.5),
                   child: Text(
-                    "by ${story.by}  |  ${story.score} points  |  ${story.comments.length} comments",
+                    "by ${story.by}  |  ${story.score} points  |  ${story.commentIds.length} comments",
                     style: const TextStyle(
                         fontFamily: "Pretendard",
                         decoration: TextDecoration.none,
