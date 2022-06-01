@@ -4,8 +4,8 @@ import 'dart:convert';
 import 'package:news/models/comment.dart';
 import 'package:http/http.dart' as http;
 
-final TopStoriesUri = 'https://hacker-news.firebaseio.com/v0/topstories.json';
-final StoryUri = 'https://hacker-news.firebaseio.com/v0/item';
+const topStoriesUri = 'https://hacker-news.firebaseio.com/v0/topstories.json';
+const storyUri = 'https://hacker-news.firebaseio.com/v0/item';
 
 abstract class Item {
   final int id;
@@ -86,3 +86,20 @@ class Job extends Item {
   }
 }
 
+Future<List<Story>> fetchTopStories() async {
+  final topStoryResponse = await http.get(Uri.parse(topStoriesUri));
+
+  if (topStoryResponse.statusCode >= 400) {
+    throw Exception("Can't fetch stories!");
+  }
+
+  final List<dynamic> topStoryIds = jsonDecode(topStoryResponse.body);
+  final storyResponses = await Future.wait(
+      topStoryIds.map((id) => http.get(Uri.parse('$storyUri/$id.json'))));
+  
+  return storyResponses
+      .map((response) => jsonDecode(response.body))
+      .where((item) => item.type == "story")
+      .map((json) => Story.fromJson(json))
+      .toList();
+}
