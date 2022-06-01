@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:news/models/item.dart';
 import 'package:news/screens/detail.dart';
+import 'package:news/widgets/itemWidget.dart';
 
 class AllPage extends StatefulWidget {
   const AllPage({Key? key}) : super(key: key);
@@ -15,12 +16,17 @@ class AllPage extends StatefulWidget {
 }
 
 class _AllPageState extends State<AllPage> {
-  late Future<List<Story>> topStories;
+  late Stream<Story> topStoryStream;
+
+  final List<Story> stories = [];
 
   @override
   void initState() {
     super.initState();
-    topStories = fetchTopStories();
+    topStoryStream = fetchTopStories();
+    topStoryStream.listen((story) => setState(() {
+          stories.add(story);
+        }));
   }
 
   @override
@@ -96,66 +102,13 @@ class _AllPageState extends State<AllPage> {
                   //   ),
                   // ),
                   Expanded(
-                      child: FutureBuilder<List<Story>>(
-                    builder: ((context, snapshot) {
-                      if (snapshot.hasData) {
-                        List<Story>? stories = snapshot.data;
-                        if (stories != null) {
-                          return ListView.builder(
-                            padding: EdgeInsets.only(top: 12.0),
-                            itemBuilder: ((context, index) {
-                              Story story = stories.elementAt(index);
-                              return GestureDetector(
-                                  onTap: () => Navigator.push(
-                                      context,
-                                      CupertinoPageRoute(
-                                        builder: (context) => DetailScreen(),
-                                      )),
-                                  child: Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 12.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            story.title,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 18.0,
-                                                decoration: TextDecoration.none,
-                                                color: Colors.white,
-                                                fontFamily: "Pretendard"),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 2.5),
-                                            child: Text(
-                                              "by ${story.by}  |  ${story.score} points  |  ${story.comments.length} comments",
-                                              style: TextStyle(
-                                                  fontFamily: "Pretendard",
-                                                  decoration:
-                                                      TextDecoration.none,
-                                                  color: Colors.white,
-                                                  fontSize: 14.2,
-                                                  fontWeight: FontWeight.w500),
-                                            ),
-                                          ),
-                                        ],
-                                      )));
-                            }),
-                            itemCount: stories.length,
-                          );
-                        }
-                      }
-
-                      return CupertinoActivityIndicator(
-                        radius: 14.0,
-                      );
+                      child: ListView.builder(
+                    padding: EdgeInsets.only(top: 12.0),
+                    itemBuilder: ((context, index) {
+                      Story story = stories.elementAt(index);
+                      return ItemWidget(story: story);
                     }),
-                    future: topStories,
+                    itemCount: stories.length,
                   )),
                 ],
               )),

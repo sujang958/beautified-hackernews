@@ -2,15 +2,27 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:news/models/item.dart';
 
 class DetailScreen extends StatefulWidget {
-  const DetailScreen({Key? key}) : super(key: key);
+  const DetailScreen({Key? key, required this.id}) : super(key: key);
+
+  final int id;
 
   @override
   State<StatefulWidget> createState() => _DetailScreenState();
 }
 
 class _DetailScreenState extends State<DetailScreen> {
+  late Future<Story> story;
+  // todo: implementing fetching comments
+
+  @override
+  void initState() {
+    super.initState();
+    story = fetchStory(id: widget.id);
+  }
+
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
@@ -26,63 +38,64 @@ class _DetailScreenState extends State<DetailScreen> {
           softWrap: true,
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 32.0, horizontal: 22.0),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Hero(
-                  tag: "__news_title",
-                  child: Text(
-                    "Varo, First Chartered Neobank, Could Run Out of Money by End of Year",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24.0,
-                        color: Colors.white,
-                        decoration: TextDecoration.none,
-                        fontFamily: "Pretendard"),
-                  )),
-              Padding(padding: EdgeInsets.symmetric(vertical: 3.0)),
-              Hero(
-                tag: "__news_info",
-                child: Text(
-                  "by mooreds  |  1 points  |  0 comments",
-                  style: TextStyle(
-                    fontFamily: "Pretendard",
-                    decoration: TextDecoration.none,
-                    color: Colors.white,
-                    fontSize: 14.4,
-                    fontWeight: FontWeight.w500
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 22.0),
-                child: CupertinoButton(
-                    onPressed: () {},
-                    color: Colors.grey[900],
-                    padding:
-                        EdgeInsets.symmetric(vertical: 2.5, horizontal: 22.0),
-                    child: Text(
-                      "Visit the website",
-                      style: TextStyle(
-                          fontSize: 16.0, fontWeight: FontWeight.w400),
-                    )),
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(vertical: 10.0),
-                      child: Column(
+            child: FutureBuilder<Story>(
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  Story? storyData = snapshot.data;
+                  if (storyData != null) {
+                    return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "thathndude 3 hours ago",
+                            storyData.title,
                             style: TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 15.6),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24.0,
+                            ),
+                          ),
+                          Padding(padding: EdgeInsets.symmetric(vertical: 3.0)),
+                          Text(
+                            "by ${storyData.by}  |  ${storyData.score} points  |  ${storyData.comments.length} comments",
+                            style: TextStyle(
+                                fontSize: 14.4, fontWeight: FontWeight.w500),
                           ),
                           Padding(
-                            padding: EdgeInsets.symmetric(vertical: 12.0),
-                            child: Text(
-                                '''Arbitration consumer protection attorney here! Nice work, and nice write up.
+                            padding: EdgeInsets.symmetric(vertical: 22.0),
+                            child: Visibility(
+                              visible: storyData.url.isEmpty ? false : true,
+                              child: CupertinoButton(
+                                  onPressed: () {},
+                                  color: Colors.grey[900],
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 2.5, horizontal: 22.0),
+                                  child: Text(
+                                    "Visit the website",
+                                    style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w400),
+                                  )),
+                            ),
+                          ),
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: Column(children: [
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 10.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "thathndude 3 hours ago",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 15.6),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 12.0),
+                                        child: Text(
+                                            '''Arbitration consumer protection attorney here! Nice work, and nice write up.
 
 If nothing else, I hope folks will run with your first point. Far too many people are scared of arbitration, and it can be a really powerful tool for situations like this. It’s fairly accessible and straightforward, especially for folks in the HN crowd.
 
@@ -95,22 +108,31 @@ So let’s say your claim is \$2,000. Under those laws, maybe you can “treble�
 But if that same law says you can get attorneys’ fees too, the company knows that they could be facing a 50k+ judgment at the end (almost entirely comprising attorneys’ fees), and then that often incentivizes earlier, higher settlements. My involvement in cases, and the threat of attorneys’ fees often results in higher settlements than my client would get on their “best day,” and even after paying out my portion. (I typically do these on contingency — I don’t get paid unless you get paid).
 
 Lastly, let’s just say I’ve done an arbitration or two with a home warranty company. They don’t make money by paying out claims! '''),
+                                      ),
+                                      CupertinoButton(
+                                          onPressed: () {},
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 3.0, horizontal: 18.0),
+                                          child: Text(
+                                            "View reply",
+                                            style: TextStyle(fontSize: 15.8),
+                                          )),
+                                    ],
+                                  ),
+                                ),
+                              ]),
+                            ),
                           ),
-                          CupertinoButton(
-                              child: Text(
-                                "View reply",
-                                style: TextStyle(fontSize: 15.8),
-                              ),
-                              onPressed: () {},
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 3.0, horizontal: 18.0)),
-                        ],
-                      ),
-                    ),
-                  ]),
-                ),
-              ),
-            ]),
+                        ]);
+                  }
+                }
+
+                return Center(
+                  child: CupertinoActivityIndicator(radius: 16.0),
+                );
+              },
+              future: story,
+            ),
           ),
         )));
   }

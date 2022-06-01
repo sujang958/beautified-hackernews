@@ -88,7 +88,7 @@ class Job extends Item {
   }
 }
 
-Future<List<Story>> fetchTopStories() async {
+Stream<Story> fetchTopStories() async* {
   final topStoryResponse = await http.get(Uri.parse(topStoriesUri));
 
   if (topStoryResponse.statusCode >= 400) {
@@ -99,11 +99,12 @@ Future<List<Story>> fetchTopStories() async {
   final storyResponses = await Future.wait(
       topStoryIds.map((id) => http.get(Uri.parse('$storyUri/$id.json'))));
 
-  return storyResponses
+  for (final story in storyResponses
       .map((response) => jsonDecode(response.body))
       .where((item) => item['type'] == "story")
-      .map((json) => Story.fromJson(json))
-      .toList();
+      .map((json) => Story.fromJson(json))) {
+        yield story;
+      }
 }
 
 Future<Story> fetchStory({required int id}) async {
