@@ -71,7 +71,8 @@ class _AllPageState extends State<AllPage> {
                                           child: Text(
                                             "by mooreds  |  1 points  |  0 comments",
                                             style: TextStyle(
-                                                fontFamily: "Pretendard", decoration: TextDecoration.none,
+                                                fontFamily: "Pretendard",
+                                                decoration: TextDecoration.none,
                                                 color: Colors.white,
                                                 fontSize: 14.2,
                                                 fontWeight: FontWeight.w500),
@@ -83,6 +84,14 @@ class _AllPageState extends State<AllPage> {
                           itemCount: 1),
                     ),
                   ),
+                  FutureBuilder(
+                    builder: ((context, snapshot) {
+                      if (snapshot.hasData) {
+                        print(snapshot.data);
+                      }
+                      return Text("I");
+                    }),
+                  )
                 ],
               )),
         ));

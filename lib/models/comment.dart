@@ -1,5 +1,5 @@
 class Comment {
-  final String id;
+  final int id;
 
   const Comment({
     required this.id,
