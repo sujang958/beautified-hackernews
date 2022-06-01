@@ -1,11 +1,11 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:news/models/item.dart';
-import 'package:news/screens/detail.dart';
 import 'package:news/widgets/itemWidget.dart';
 
 class AllPage extends StatefulWidget {
@@ -102,14 +102,22 @@ class _AllPageState extends State<AllPage> {
                   //   ),
                   // ),
                   Expanded(
-                      child: ListView.builder(
-                    padding: EdgeInsets.only(top: 12.0),
-                    itemBuilder: ((context, index) {
-                      Story story = stories.elementAt(index);
-                      return ItemWidget(story: story);
-                    }),
-                    itemCount: stories.length,
-                  )),
+                      child: stories.isEmpty
+                          ? CupertinoActivityIndicator(
+                              radius: 17.0,
+                            )
+                          : RefreshIndicator(
+                              color: Colors.white,
+                              backgroundColor: Colors.grey[900],
+                              child: ListView.builder(
+                                padding: EdgeInsets.only(top: 12.0),
+                                itemBuilder: ((context, index) {
+                                  Story story = stories.elementAt(index);
+                                  return ItemWidget(story: story);
+                                }),
+                                itemCount: stories.length,
+                              ),
+                              onRefresh: () async {})),
                 ],
               )),
         ));

@@ -96,6 +96,7 @@ Stream<Story> fetchTopStories() async* {
   }
 
   final List<dynamic> topStoryIds = jsonDecode(topStoryResponse.body);
+
   final storyResponses = await Future.wait(
       topStoryIds.map((id) => http.get(Uri.parse('$storyUri/$id.json'))));
 
