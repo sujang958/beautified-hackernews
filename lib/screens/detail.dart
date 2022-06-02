@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:news/models/story.dart';
 import 'package:news/widgets/commentWidget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DetailScreen extends StatefulWidget {
   const DetailScreen({Key? key, required this.id}) : super(key: key);
@@ -65,7 +66,9 @@ class _DetailScreenState extends State<DetailScreen> {
                             child: Visibility(
                               visible: storyData.url.isEmpty ? false : true,
                               child: CupertinoButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    launchUrl(Uri.parse(storyData.url));
+                                  },
                                   color: Colors.grey[900],
                                   padding: EdgeInsets.symmetric(
                                       vertical: 2.5, horizontal: 22.0),

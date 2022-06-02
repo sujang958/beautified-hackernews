@@ -22,6 +22,8 @@ class Comment extends Item {
   }) : super(id: id, by: by, time: time);
 
   factory Comment.fromJson(Map<String, dynamic> json) {
+    print(json['kids']);
+
     return Comment(
         id: json['id'],
         by: json['by'],
@@ -38,6 +40,6 @@ Future<Comment> fetchComment({required int id}) async {
   if (commentResponse.statusCode >= 400) {
     throw Exception("Can't fetch the comment!");
   }
-  
+
   return Comment.fromJson(jsonDecode(commentResponse.body));
 }

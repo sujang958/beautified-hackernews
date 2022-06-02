@@ -30,7 +30,7 @@ class Story extends Item {
     return Story(
       id: json['id'],
       by: json['by'],
-      commentIds: json['kids'] == null ? <int>[] : List.from(json['kids']),
+      commentIds: json['kids'] == null ? [] : List.from(json['kids']),
       score: json['score'],
       time: json['time'],
       title: json['title'],
@@ -48,8 +48,9 @@ Stream<Story> fetchTopStories() async* {
 
   final List<dynamic> topStoryIds = jsonDecode(topStoryResponse.body);
 
-  final storyResponses = await Future.wait(
-      topStoryIds.map((id) => http.get(Uri.parse('$storyUri/$id.json'))));
+  final storyResponses = await Future.wait(topStoryIds
+      .take(200)
+      .map((id) => http.get(Uri.parse('$storyUri/$id.json'))));
 
   for (final story in storyResponses
       .map((response) => jsonDecode(response.body))
