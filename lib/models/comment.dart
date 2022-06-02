@@ -22,8 +22,6 @@ class Comment extends Item {
   }) : super(id: id, by: by, time: time);
 
   factory Comment.fromJson(Map<String, dynamic> json) {
-    print(json);
-
     return Comment(
         id: json['id'],
         by: json['by'],

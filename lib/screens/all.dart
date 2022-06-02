@@ -15,29 +15,56 @@ class AllPage extends StatefulWidget {
 }
 
 class _AllPageState extends State<AllPage> {
-  // todo: improve story speed or show loading indicator 
   late Stream<Story> topStoryStream;
+  bool isFetchingMore = false;
 
-  final List<Story> stories = [];
+  final _itemListController = ScrollController();
+  final Map<int, Story> stories = {};
 
   @override
   void initState() {
     super.initState();
-    _addStoryFromStream();
+    _addStoryFromStream(20);
+    _itemListController.addListener(_itemListInfinityScrollListener);
   }
 
-  void _addStoryFromStream() {
-    topStoryStream = fetchTopStories();
+  @override
+  void dispose() {
+    super.dispose();
+    _itemListController.removeListener(_itemListInfinityScrollListener);
+  }
+
+  void _itemListInfinityScrollListener() {
+    if (_itemListController.position.pixels >=
+            _itemListController.position.maxScrollExtent - 82.0 &&
+        !isFetchingMore) {
+      setState(() {
+        isFetchingMore = true;
+      });
+      topStoryStream = fetchTopStories(count: stories.entries.length + 10);
+      topStoryStream.listen(
+          (story) => setState(() {
+                stories[story.id] = story;
+              }), onDone: () {
+        setState(() {
+          isFetchingMore = false;
+        });
+      });
+    }
+  }
+
+  void _addStoryFromStream(int? count) {
+    topStoryStream = fetchTopStories(count: count);
     topStoryStream.listen((story) => setState(() {
-          stories.add(story);
+          stories[story.id] = story;
         }));
   }
 
   void _updateStories() {
     setState(() {
-      stories.removeRange(0, stories.length);
+      stories.clear();
     });
-    _addStoryFromStream();
+    _addStoryFromStream(stories.length);
   }
 
   @override
@@ -66,19 +93,25 @@ class _AllPageState extends State<AllPage> {
                               radius: 17.0,
                             )
                           : RefreshIndicator(
-                              color: Colors.white,
-                              backgroundColor: Colors.grey[900],
-                              child: ListView.builder(
-                                padding: EdgeInsets.only(top: 12.0),
-                                itemBuilder: ((context, index) {
-                                  Story story = stories.elementAt(index);
-                                  return ItemWidget(story: story);
-                                }),
-                                itemCount: stories.length,
-                              ),
-                              onRefresh: () async {
-                                _updateStories();
-                              })),
+                                  color: Colors.white,
+                                  backgroundColor: Colors.grey[900],
+                                  child: ListView.builder(
+                                    controller: _itemListController,
+                                    padding: EdgeInsets.only(top: 12.0),
+                                    itemBuilder: ((context, index) {
+                                      Story story = stories.entries
+                                          .elementAt(index)
+                                          .value;
+                                      return ItemWidget(story: story);
+                                    }),
+                                    itemCount: stories.length,
+                                  ),
+                                  onRefresh: () async {
+                                    _updateStories();
+                                  })),
+                  isFetchingMore
+                      ? CupertinoActivityIndicator(radius: 14.0)
+                      : SizedBox.shrink(),
                 ],
               )),
         ));

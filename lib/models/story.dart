@@ -39,7 +39,7 @@ class Story extends Item {
   }
 }
 
-Stream<Story> fetchTopStories() async* {
+Stream<Story> fetchTopStories({int? count}) async* {
   final topStoryResponse = await http.get(Uri.parse(topStoriesUri));
 
   if (topStoryResponse.statusCode >= 400) {
@@ -49,7 +49,7 @@ Stream<Story> fetchTopStories() async* {
   final List<dynamic> topStoryIds = jsonDecode(topStoryResponse.body);
 
   final storyResponses = await Future.wait(topStoryIds
-      .take(200)
+      .take(count ?? 20)
       .map((id) => http.get(Uri.parse('$storyUri/$id.json'))));
 
   for (final story in storyResponses
