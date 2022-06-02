@@ -65,7 +65,6 @@ class _CommentWidgetState extends State<CommentWidget> {
             }
 
             if (snapshot.hasError) {
-              print(snapshot.error);
               return const SizedBox.shrink();
             }
 

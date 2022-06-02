@@ -22,7 +22,7 @@ class Comment extends Item {
   }) : super(id: id, by: by, time: time);
 
   factory Comment.fromJson(Map<String, dynamic> json) {
-    print(json['kids']);
+    print(json);
 
     return Comment(
         id: json['id'],
@@ -30,7 +30,7 @@ class Comment extends Item {
         time: json['time'],
         commentIds: json['kids'] == null ? [] : List.from(json['kids']),
         parentId: json['parent'],
-        comment: json['text']);
+        comment: json['text'] ?? '');
   }
 }
 
@@ -41,5 +41,13 @@ Future<Comment> fetchComment({required int id}) async {
     throw Exception("Can't fetch the comment!");
   }
 
-  return Comment.fromJson(jsonDecode(commentResponse.body));
+  final Map<String, dynamic> decoded = jsonDecode(commentResponse.body);
+
+  if (decoded.containsKey('deleted')) {
+    if (decoded['deleted']) {
+      throw Exception("Comment Not Found");
+    }
+  }
+
+  return Comment.fromJson(decoded);
 }

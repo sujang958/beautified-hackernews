@@ -55,8 +55,8 @@ Stream<Story> fetchTopStories() async* {
   for (final story in storyResponses
       .map((response) => jsonDecode(response.body))
       .where((item) => item['type'] == "story")
-      .map((json) => Story.fromJson(json))) {
-    yield story;
+      .where((item) => item['deleted'] == null || item['deleted'] == false)) {
+    yield Story.fromJson(story);
   }
 }
 
