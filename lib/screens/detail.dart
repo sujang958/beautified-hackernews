@@ -63,22 +63,21 @@ class _DetailScreenState extends State<DetailScreen> {
                           ),
                           Padding(
                             padding: EdgeInsets.symmetric(vertical: 22.0),
-                            child: Visibility(
-                              visible: storyData.url.isEmpty ? false : true,
-                              child: CupertinoButton(
-                                  onPressed: () {
-                                    launchUrl(Uri.parse(storyData.url));
-                                  },
-                                  color: Colors.grey[900],
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 2.5, horizontal: 22.0),
-                                  child: Text(
-                                    "Visit the website",
-                                    style: TextStyle(
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.w400),
-                                  )),
-                            ),
+                            child: CupertinoButton(
+                                onPressed: () {
+                                  launchUrl(Uri.parse(storyData.url.isEmpty
+                                      ? 'https://news.ycombinator.com/item?id=${storyData.id}'
+                                      : storyData.url));
+                                },
+                                color: Colors.grey[900],
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 2.5, horizontal: 22.0),
+                                child: Text(
+                                  "Visit the website",
+                                  style: TextStyle(
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w400),
+                                )),
                           ),
                           Expanded(
                             child: SingleChildScrollView(
