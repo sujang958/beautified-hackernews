@@ -93,22 +93,28 @@ class _AllPageState extends State<AllPage> {
                               radius: 17.0,
                             )
                           : RefreshIndicator(
-                                  color: Colors.white,
-                                  backgroundColor: Colors.grey[900],
+                              color: Colors.white,
+                              backgroundColor: Colors.grey[900],
+                              child: RawScrollbar(
+                                thumbColor: Colors.white30,
+                                radius: Radius.circular(12.0),
+                                interactive: true,
+                                thumbVisibility: true,
+                                thickness: 4.0,
+                                controller: _itemListController,
                                   child: ListView.builder(
-                                    controller: _itemListController,
-                                    padding: EdgeInsets.only(top: 12.0),
-                                    itemBuilder: ((context, index) {
-                                      Story story = stories.entries
-                                          .elementAt(index)
-                                          .value;
-                                      return ItemWidget(story: story);
-                                    }),
-                                    itemCount: stories.length,
-                                  ),
-                                  onRefresh: () async {
-                                    _updateStories();
-                                  })),
+                                controller: _itemListController,
+                                padding: EdgeInsets.only(top: 12.0),
+                                itemBuilder: ((context, index) {
+                                  Story story =
+                                      stories.entries.elementAt(index).value;
+                                  return ItemWidget(story: story);
+                                }),
+                                itemCount: stories.length,
+                              )),
+                              onRefresh: () async {
+                                _updateStories();
+                              })),
                   isFetchingMore
                       ? CupertinoActivityIndicator(radius: 14.0)
                       : SizedBox.shrink(),
