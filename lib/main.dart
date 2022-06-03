@@ -3,6 +3,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:news/screens/all.dart';
+import 'package:news/screens/setting.dart';
 
 void main() {
   runApp(const App());
@@ -37,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
       controller: tabController,
       backgroundColor: Colors.black,
       tabBar: CupertinoTabBar(
-          iconSize: 22.0,
+          iconSize: 21.0,
           backgroundColor: Colors.grey[900]?.withAlpha(180),
           items: [
             BottomNavigationBarItem(
@@ -45,12 +46,14 @@ class _HomeScreenState extends State<HomeScreen> {
             BottomNavigationBarItem(
                 icon: Icon(CupertinoIcons.question_circle), label: "Ask"),
             BottomNavigationBarItem(
-                icon: Icon(CupertinoIcons.square_list), label: "Show")
+                icon: Icon(CupertinoIcons.square_list), label: "Show"),
+            BottomNavigationBarItem(
+                icon: Icon(CupertinoIcons.settings), label: "Setting")
           ]),
       tabBuilder: (BuildContext context, int index) => CupertinoTabView(
           builder: (context) => DefaultTextStyle(
               style: TextStyle(color: Colors.white, fontFamily: "Pretendard"),
-              child: AllPage())),
+              child: index == 3 ? SettingScreen() : AllScreen())),
     );
   }
 }

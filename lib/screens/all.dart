@@ -7,14 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:news/models/story.dart';
 import 'package:news/widgets/itemWidget.dart';
 
-class AllPage extends StatefulWidget {
-  const AllPage({Key? key}) : super(key: key);
+class AllScreen extends StatefulWidget {
+  const AllScreen({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _AllPageState();
+  State<StatefulWidget> createState() => _AllScreenState();
 }
 
-class _AllPageState extends State<AllPage> {
+class _AllScreenState extends State<AllScreen> {
   late Stream<Story> topStoryStream;
   bool isFetchingMore = false;
 
