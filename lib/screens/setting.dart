@@ -22,8 +22,8 @@ class _SettingScreenState extends State<SettingScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                      padding: const EdgeInsets.only(top: 42.0, bottom: 24.0),
+                  const Padding(
+                      padding: EdgeInsets.only(top: 42.0, bottom: 24.0),
                       child: Text(
                         "Settings",
                         style: TextStyle(
@@ -72,6 +72,46 @@ class _SettingScreenState extends State<SettingScreen> {
                                       fontSize: 14.0, color: Colors.white),
                                 ),
                                 GestureDetector(
+                                  onTap: () {
+                                    showCupertinoModalPopup(
+                                        context: context,
+                                        builder: (context) => Theme(
+                                            data: ThemeData.dark(),
+                                            child: CupertinoAlertDialog(
+                                              title: const Text(
+                                                  "Change initial loading items"),
+                                              content: const Padding(
+                                                  padding: EdgeInsets.only(
+                                                      top: 10.0),
+                                                  child: CupertinoTextField(
+                                                    placeholder:
+                                                        "Input with range 1~500",
+                                                    keyboardType:
+                                                        TextInputType.number,
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  )),
+                                              actions: <CupertinoDialogAction>[
+                                                CupertinoDialogAction(
+                                                  isDefaultAction: true,
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text(
+                                                    "Cancel",
+                                                    style: TextStyle(
+                                                        color: Colors.red[400]),
+                                                  ),
+                                                ),
+                                                CupertinoDialogAction(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text("Change"),
+                                                ),
+                                              ],
+                                            )));
+                                  },
                                   child: Text(
                                     "50 >",
                                     style: TextStyle(
