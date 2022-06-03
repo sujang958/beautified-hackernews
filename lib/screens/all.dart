@@ -24,7 +24,7 @@ class _AllPageState extends State<AllPage> {
   @override
   void initState() {
     super.initState();
-    _addStoryFromStream(20);
+    _addStoryFromStream(16);
     _itemListController.addListener(_itemListInfinityScrollListener);
   }
 
@@ -64,7 +64,7 @@ class _AllPageState extends State<AllPage> {
     setState(() {
       stories.clear();
     });
-    _addStoryFromStream(stories.length);
+    _addStoryFromStream(16);
   }
 
   @override
@@ -96,28 +96,48 @@ class _AllPageState extends State<AllPage> {
                               color: Colors.white,
                               backgroundColor: Colors.grey[900],
                               child: RawScrollbar(
-                                thumbColor: Colors.white30,
-                                radius: Radius.circular(12.0),
-                                interactive: true,
-                                thumbVisibility: true,
-                                thickness: 4.0,
-                                controller: _itemListController,
+                                  thumbColor: Colors.white30,
+                                  radius: Radius.circular(12.0),
+                                  interactive: true,
+                                  thumbVisibility: true,
+                                  thickness: 4.0,
+                                  controller: _itemListController,
                                   child: ListView.builder(
-                                controller: _itemListController,
-                                padding: EdgeInsets.only(top: 12.0),
-                                itemBuilder: ((context, index) {
-                                  Story story =
-                                      stories.entries.elementAt(index).value;
-                                  return ItemWidget(story: story);
-                                }),
-                                itemCount: stories.length,
-                              )),
+                                    controller: _itemListController,
+                                    physics: BouncingScrollPhysics(),
+                                    padding: EdgeInsets.only(top: 12.0),
+                                    itemBuilder: ((context, index) {
+                                      if (index >= stories.length) {
+                                        return Padding(
+                                          padding: EdgeInsets.only(
+                                              top: MediaQuery.of(context)
+                                                      .size
+                                                      .height /
+                                                  4,
+                                              bottom: MediaQuery.of(context)
+                                                      .size
+                                                      .height /
+                                                  8),
+                                          child: CupertinoActivityIndicator(
+                                              radius: 15.0),
+                                        );
+                                      }
+
+                                      Story story = stories.entries
+                                          .elementAt(index)
+                                          .value;
+                                      return ItemWidget(story: story);
+                                    }),
+                                    itemCount: isFetchingMore
+                                        ? stories.length + 1
+                                        : stories.length,
+                                  )),
                               onRefresh: () async {
                                 _updateStories();
                               })),
-                  isFetchingMore
-                      ? CupertinoActivityIndicator(radius: 14.0)
-                      : SizedBox.shrink(),
+                  // isFetchingMore
+                  //     ? CupertinoActivityIndicator(radius: 14.0)
+                  //     : SizedBox.shrink(),
                 ],
               )),
         ));
