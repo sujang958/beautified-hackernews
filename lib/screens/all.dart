@@ -126,7 +126,9 @@ class _AllScreenState extends State<AllScreen> {
                                       Story story = stories.entries
                                           .elementAt(index)
                                           .value;
-                                      return ItemWidget(story: story);
+                                      return Material(
+                                          color: Colors.transparent,
+                                          child: ItemWidget(story: story));
                                     }),
                                     itemCount: isFetchingMore
                                         ? stories.length + 1

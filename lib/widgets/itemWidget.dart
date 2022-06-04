@@ -16,13 +16,16 @@ class _ItemWidgetState extends State<ItemWidget> {
   @override
   Widget build(BuildContext context) {
     Story story = widget.story;
-    return GestureDetector(
+    return ListTile(
+        contentPadding: EdgeInsets.zero,
+        enableFeedback: false,
+        tileColor: Colors.transparent,
         onTap: () => Navigator.push(
             context,
             CupertinoPageRoute(
               builder: (context) => DetailScreen(id: story.id),
             )),
-        child: Padding(
+        title: Padding(
             padding: const EdgeInsets.symmetric(vertical: 12.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

@@ -16,7 +16,8 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Beautified Hacker News",
-      theme: ThemeData(fontFamily: "Pretendard"),
+      theme:
+          ThemeData(fontFamily: "Pretendard", splashColor: Colors.transparent),
       home: HomeScreen(),
     );
   }
