@@ -18,6 +18,7 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen> {
   late Future<Story> story;
 
+  final replyListViewController = ScrollController();
   final commentPageViewController = PageController();
   final List<int> commentsHistory = <int>[];
   Future<Comment>? currentComment;
@@ -31,6 +32,7 @@ class _DetailScreenState extends State<DetailScreen> {
   void _pushCommentHistory(int id) {
     setState(() {
       commentsHistory.add(id);
+      _animateToTop();
       _setCurrentComment(id);
     });
   }
@@ -39,13 +41,18 @@ class _DetailScreenState extends State<DetailScreen> {
     setState(() {
       commentsHistory.removeLast();
       if (commentsHistory.isEmpty) {
-        currentComment = null;
-        commentsHistory.clear();
-        _animateToPage(0);
+        _backToCommentsList();
         return;
       }
+      _animateToTop();
       _setCurrentComment(commentsHistory.last);
     });
+  }
+
+  void _backToCommentsList() {
+    _animateToPage(0);
+    currentComment = null;
+    commentsHistory.clear();
   }
 
   void _setCurrentComment(int id) {
@@ -57,6 +64,11 @@ class _DetailScreenState extends State<DetailScreen> {
   void _animateToPage(int page) {
     commentPageViewController.animateToPage(page,
         duration: Duration(milliseconds: 500), curve: Curves.easeIn);
+  }
+
+  void _animateToTop() {
+    replyListViewController.animateTo(0,
+        curve: Curves.easeIn, duration: Duration(milliseconds: 200));
   }
 
   @override
@@ -115,6 +127,7 @@ class _DetailScreenState extends State<DetailScreen> {
                           ),
                           Expanded(
                               child: PageView(
+                            physics: NeverScrollableScrollPhysics(),
                             controller: commentPageViewController,
                             children: [
                               SingleChildScrollView(
@@ -152,6 +165,8 @@ class _DetailScreenState extends State<DetailScreen> {
                                                   }),
                                               Expanded(
                                                   child: ListView(
+                                                controller:
+                                                    replyListViewController,
                                                 children: [
                                                   RawCommentWidget(
                                                     comment: comment,
@@ -166,9 +181,8 @@ class _DetailScreenState extends State<DetailScreen> {
                                                     CommentWidget(
                                                         commentId: commentId,
                                                         onClickReply: () {
-                                                          final copiedId = int
-                                                              .parse(commentId
-                                                                  .toString());
+                                                          final copiedId =
+                                                              commentId;
                                                           _pushCommentHistory(
                                                               copiedId);
                                                         })
