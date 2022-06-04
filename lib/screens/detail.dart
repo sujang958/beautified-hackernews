@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:news/models/comment.dart';
 import 'package:news/models/story.dart';
 import 'package:news/widgets/commentWidget.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -17,12 +17,46 @@ class DetailScreen extends StatefulWidget {
 
 class _DetailScreenState extends State<DetailScreen> {
   late Future<Story> story;
-  // todo: implementing fetching comments
+
+  final commentPageViewController = PageController();
+  final List<int> commentsHistory = <int>[];
+  Future<Comment>? currentComment;
 
   @override
   void initState() {
     super.initState();
     story = fetchStory(id: widget.id);
+  }
+
+  void _pushCommentHistory(int id) {
+    setState(() {
+      commentsHistory.add(id);
+      _setCurrentComment(id);
+    });
+  }
+
+  void _popCommentHistory() {
+    setState(() {
+      commentsHistory.removeLast();
+      if (commentsHistory.isEmpty) {
+        currentComment = null;
+        commentsHistory.clear();
+        _animateToPage(0);
+        return;
+      }
+      _setCurrentComment(commentsHistory.last);
+    });
+  }
+
+  void _setCurrentComment(int id) {
+    setState(() {
+      currentComment = fetchComment(id: id);
+    });
+  }
+
+  void _animateToPage(int page) {
+    commentPageViewController.animateToPage(page,
+        duration: Duration(milliseconds: 500), curve: Curves.easeIn);
   }
 
   @override
@@ -80,13 +114,80 @@ class _DetailScreenState extends State<DetailScreen> {
                                 )),
                           ),
                           Expanded(
-                            child: SingleChildScrollView(
-                              child: Column(children: [
-                                for (final commentId in storyData.commentIds)
-                                  CommentWidget(commentId: commentId)
-                              ]),
-                            ),
-                          ),
+                              child: PageView(
+                            controller: commentPageViewController,
+                            children: [
+                              SingleChildScrollView(
+                                child: Column(children: [
+                                  for (final commentId in storyData.commentIds)
+                                    CommentWidget(
+                                      commentId: commentId,
+                                      onClickReply: () {
+                                        final int copiedId = commentId;
+                                        _pushCommentHistory(copiedId);
+                                        _animateToPage(1);
+                                      },
+                                    )
+                                ]),
+                              ),
+                              currentComment != null
+                                  ? FutureBuilder<Comment>(
+                                      future: currentComment,
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData) {
+                                          Comment comment =
+                                              snapshot.data as Comment;
+
+                                          return Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              CupertinoButton(
+                                                  child: Icon(
+                                                    CupertinoIcons.back,
+                                                    color: Colors.blue[600],
+                                                  ),
+                                                  onPressed: () {
+                                                    _popCommentHistory();
+                                                  }),
+                                              Expanded(
+                                                  child: ListView(
+                                                children: [
+                                                  RawCommentWidget(
+                                                    comment: comment,
+                                                    onClickReply: () {},
+                                                    replyButtonEnabled: false,
+                                                  ),
+                                                  Divider(
+                                                    color: Colors.grey[600],
+                                                  ),
+                                                  for (final commentId
+                                                      in comment.commentIds)
+                                                    CommentWidget(
+                                                        commentId: commentId,
+                                                        onClickReply: () {
+                                                          final copiedId = int
+                                                              .parse(commentId
+                                                                  .toString());
+                                                          _pushCommentHistory(
+                                                              copiedId);
+                                                        })
+                                                ],
+                                              )),
+                                            ],
+                                          );
+                                        }
+
+                                        return CupertinoActivityIndicator(
+                                          radius: 13.0,
+                                        );
+                                      },
+                                    )
+                                  : Center(
+                                      child: Text("Are you try to get this?"),
+                                    ),
+                            ],
+                          ))
                         ]);
                   }
                 }
