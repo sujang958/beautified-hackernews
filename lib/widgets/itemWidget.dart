@@ -18,7 +18,6 @@ class _ItemWidgetState extends State<ItemWidget> {
     Story story = widget.story;
     return ListTile(
         contentPadding: EdgeInsets.zero,
-        enableFeedback: false,
         tileColor: Colors.transparent,
         onTap: () => Navigator.push(
             context,

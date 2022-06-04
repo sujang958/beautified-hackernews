@@ -27,12 +27,25 @@ class _DetailScreenState extends State<DetailScreen> {
   void initState() {
     super.initState();
     story = fetchStory(id: widget.id);
+    commentPageViewController.addListener(() {
+      if (commentPageViewController.page == 0.0) {
+        _backToCommentsList();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    commentPageViewController.dispose();
   }
 
   void _pushCommentHistory(int id) {
     setState(() {
       commentsHistory.add(id);
-      _animateToTop();
+      if (commentsHistory.length > 1) {
+        _animateToTop();
+      }
       _setCurrentComment(id);
     });
   }
@@ -51,8 +64,10 @@ class _DetailScreenState extends State<DetailScreen> {
 
   void _backToCommentsList() {
     _animateToPage(0);
-    currentComment = null;
-    commentsHistory.clear();
+    setState(() {
+      currentComment = null;
+      commentsHistory.clear();
+    });
   }
 
   void _setCurrentComment(int id) {
@@ -63,7 +78,7 @@ class _DetailScreenState extends State<DetailScreen> {
 
   void _animateToPage(int page) {
     commentPageViewController.animateToPage(page,
-        duration: Duration(milliseconds: 500), curve: Curves.easeIn);
+        duration: Duration(milliseconds: 200), curve: Curves.easeIn);
   }
 
   void _animateToTop() {
@@ -127,7 +142,9 @@ class _DetailScreenState extends State<DetailScreen> {
                           ),
                           Expanded(
                               child: PageView(
-                            physics: NeverScrollableScrollPhysics(),
+                            physics: currentComment == null
+                                ? NeverScrollableScrollPhysics()
+                                : BouncingScrollPhysics(),
                             controller: commentPageViewController,
                             children: [
                               SingleChildScrollView(

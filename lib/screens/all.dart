@@ -137,9 +137,6 @@ class _AllScreenState extends State<AllScreen> {
                               onRefresh: () async {
                                 _updateStories();
                               })),
-                  // isFetchingMore
-                  //     ? CupertinoActivityIndicator(radius: 14.0)
-                  //     : SizedBox.shrink(),
                 ],
               )),
         ));
