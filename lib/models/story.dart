@@ -15,6 +15,7 @@ class Story extends Item {
   final int score;
   final String title;
   final String url;
+  final String content;
 
   const Story({
     required id,
@@ -24,10 +25,13 @@ class Story extends Item {
     required this.score,
     required this.title,
     required this.url,
+    required this.content,
   }) : super(id: id, by: by, time: time);
 
   factory Story.fromJson(Map<String, dynamic> json) {
+    print(json);
     return Story(
+      content: json['text'] ?? '',
       id: json['id'],
       by: json['by'],
       commentIds: json['kids'] == null ? [] : List.from(json['kids']),

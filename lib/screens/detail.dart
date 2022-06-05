@@ -104,123 +104,132 @@ class _DetailScreenState extends State<DetailScreen> {
             child: FutureBuilder<Story>(
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  Story? storyData = snapshot.data;
-                  if (storyData != null) {
-                    return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            storyData.title,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 24.0,
+                  Story storyData = snapshot.data as Story;
+                  return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          storyData.title,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24.0,
+                          ),
+                        ),
+                        Padding(padding: EdgeInsets.symmetric(vertical: 3.0)),
+                        Text(
+                          "by ${storyData.by}  |  ${storyData.score} points  |  ${storyData.commentIds.length} comments",
+                          style: TextStyle(
+                              fontSize: 14.4, fontWeight: FontWeight.w500),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 22.0),
+                          child: CupertinoButton(
+                              onPressed: () {
+                                launchUrl(Uri.parse(storyData.url.isEmpty
+                                    ? 'https://news.ycombinator.com/item?id=${storyData.id}'
+                                    : storyData.url));
+                              },
+                              color: Colors.grey[900],
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 2.5, horizontal: 22.0),
+                              child: Text(
+                                "Visit the website",
+                                style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w400),
+                              )),
+                        ),
+                        Expanded(
+                            child: PageView(
+                          physics: currentComment == null
+                              ? NeverScrollableScrollPhysics()
+                              : BouncingScrollPhysics(),
+                          controller: commentPageViewController,
+                          children: [
+                            SingleChildScrollView(
+                              physics: BouncingScrollPhysics(),
+                              child: Column(children: [
+                                storyData.content.isNotEmpty ?
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 24.0, top: 12.0),
+                                  child: Column(
+                                    children: [
+                                      Text(storyData.content),
+                                      Divider(color: Colors.grey[500]),
+                                    ],
+                                  )) : SizedBox.shrink(),
+                                for (final commentId in storyData.commentIds)
+                                  CommentWidget(
+                                    commentId: commentId,
+                                    onClickReply: () {
+                                      final int copiedId = commentId;
+                                      _pushCommentHistory(copiedId);
+                                      _animateToPage(1);
+                                    },
+                                  )
+                              ]),
                             ),
-                          ),
-                          Padding(padding: EdgeInsets.symmetric(vertical: 3.0)),
-                          Text(
-                            "by ${storyData.by}  |  ${storyData.score} points  |  ${storyData.commentIds.length} comments",
-                            style: TextStyle(
-                                fontSize: 14.4, fontWeight: FontWeight.w500),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 22.0),
-                            child: CupertinoButton(
-                                onPressed: () {
-                                  launchUrl(Uri.parse(storyData.url.isEmpty
-                                      ? 'https://news.ycombinator.com/item?id=${storyData.id}'
-                                      : storyData.url));
-                                },
-                                color: Colors.grey[900],
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 2.5, horizontal: 22.0),
-                                child: Text(
-                                  "Visit the website",
-                                  style: TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w400),
-                                )),
-                          ),
-                          Expanded(
-                              child: PageView(
-                            physics: currentComment == null
-                                ? NeverScrollableScrollPhysics()
-                                : BouncingScrollPhysics(),
-                            controller: commentPageViewController,
-                            children: [
-                              SingleChildScrollView(
-                                child: Column(children: [
-                                  for (final commentId in storyData.commentIds)
-                                    CommentWidget(
-                                      commentId: commentId,
-                                      onClickReply: () {
-                                        final int copiedId = commentId;
-                                        _pushCommentHistory(copiedId);
-                                        _animateToPage(1);
-                                      },
-                                    )
-                                ]),
-                              ),
-                              currentComment != null
-                                  ? FutureBuilder<Comment>(
-                                      future: currentComment,
-                                      builder: (context, snapshot) {
-                                        if (snapshot.hasData) {
-                                          Comment comment =
-                                              snapshot.data as Comment;
-
-                                          return Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              CupertinoButton(
-                                                  child: Icon(
-                                                    CupertinoIcons.back,
-                                                    color: Colors.blue[600],
-                                                  ),
-                                                  onPressed: () {
-                                                    _popCommentHistory();
-                                                  }),
-                                              Expanded(
-                                                  child: ListView(
-                                                controller:
-                                                    replyListViewController,
-                                                children: [
-                                                  RawCommentWidget(
-                                                    comment: comment,
-                                                    onClickReply: () {},
-                                                    replyButtonEnabled: false,
-                                                  ),
-                                                  Divider(
-                                                    color: Colors.grey[600],
-                                                  ),
-                                                  for (final commentId
-                                                      in comment.commentIds)
-                                                    CommentWidget(
-                                                        commentId: commentId,
-                                                        onClickReply: () {
-                                                          final copiedId =
-                                                              commentId;
-                                                          _pushCommentHistory(
-                                                              copiedId);
-                                                        })
-                                                ],
-                                              )),
-                                            ],
-                                          );
-                                        }
-
-                                        return CupertinoActivityIndicator(
-                                          radius: 13.0,
+                            currentComment != null
+                                ? FutureBuilder<Comment>(
+                                    future: currentComment,
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData) {
+                                        Comment comment =
+                                            snapshot.data as Comment;
+                                        // todo: implement swipe to back previous comment (history list to pageview)
+                                        // todo: add ask & show hn's text
+                                        return Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            CupertinoButton(
+                                                child: Icon(
+                                                  CupertinoIcons.back,
+                                                  color: Colors.blue[600],
+                                                ),
+                                                onPressed: () {
+                                                  _popCommentHistory();
+                                                }),
+                                            Expanded(
+                                                child: ListView(
+                                              controller:
+                                                  replyListViewController,
+                                              children: [
+                                                RawCommentWidget(
+                                                  comment: comment,
+                                                  onClickReply: () {},
+                                                  replyButtonEnabled: false,
+                                                ),
+                                                Divider(
+                                                  color: Colors.grey[600],
+                                                ),
+                                                for (final commentId
+                                                    in comment.commentIds)
+                                                  CommentWidget(
+                                                      commentId: commentId,
+                                                      onClickReply: () {
+                                                        final copiedId =
+                                                            commentId;
+                                                        _pushCommentHistory(
+                                                            copiedId);
+                                                      })
+                                              ],
+                                            )),
+                                          ],
                                         );
-                                      },
-                                    )
-                                  : Center(
-                                      child: Text("Are you try to get this?"),
-                                    ),
-                            ],
-                          ))
-                        ]);
-                  }
+                                      }
+
+                                      return CupertinoActivityIndicator(
+                                        radius: 13.0,
+                                      );
+                                    },
+                                  )
+                                : Center(
+                                    child: Text("Are you try to get this?"),
+                                  ),
+                          ],
+                        ))
+                      ]);
                 }
 
                 return Center(
