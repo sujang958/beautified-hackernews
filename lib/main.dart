@@ -16,7 +16,10 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Beautified Hacker News",
+      themeMode: ThemeMode.dark,
       theme: ThemeData(
+          brightness: Brightness.dark,
+          backgroundColor: Colors.black,
           fontFamily: "Pretendard",
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent),
@@ -38,25 +41,24 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return CupertinoTabScaffold(
-      controller: tabController,
-      backgroundColor: Colors.black,
-      tabBar: CupertinoTabBar(
-          iconSize: 21.0,
-          backgroundColor: Colors.grey[900]?.withAlpha(180),
-          items: [
-            BottomNavigationBarItem(
-                icon: Icon(CupertinoIcons.news), label: "All"),
-            BottomNavigationBarItem(
-                icon: Icon(CupertinoIcons.question_circle), label: "Ask"),
-            BottomNavigationBarItem(
-                icon: Icon(CupertinoIcons.square_list), label: "Show"),
-            BottomNavigationBarItem(
-                icon: Icon(CupertinoIcons.settings), label: "Setting")
-          ]),
-      tabBuilder: (BuildContext context, int index) => CupertinoTabView(
-          builder: (context) => DefaultTextStyle(
-              style: TextStyle(color: Colors.white, fontFamily: "Pretendard"),
-              child: index == 3 ? SettingScreen() : AllScreen())),
-    );
+        controller: tabController,
+        backgroundColor: Colors.black,
+        tabBar: CupertinoTabBar(
+            iconSize: 21.0,
+            backgroundColor: Colors.grey[900]?.withAlpha(180),
+            items: [
+              BottomNavigationBarItem(
+                  icon: Icon(CupertinoIcons.news), label: "All"),
+              BottomNavigationBarItem(
+                  icon: Icon(CupertinoIcons.question_circle), label: "Ask"),
+              BottomNavigationBarItem(
+                  icon: Icon(CupertinoIcons.square_list), label: "Show"),
+              BottomNavigationBarItem(
+                  icon: Icon(CupertinoIcons.settings), label: "Setting")
+            ]),
+        tabBuilder: (BuildContext context, int index) => CupertinoTabView(
+            builder: (context) => DefaultTextStyle(
+                style: TextStyle(color: Colors.white, fontFamily: "Pretendard"),
+                child: index == 3 ? SettingScreen() : AllScreen())));
   }
 }
