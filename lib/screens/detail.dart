@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:news/models/comment.dart';
 import 'package:news/models/story.dart';
 import 'package:news/widgets/commentWidget.dart';
@@ -16,7 +17,7 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
-  late Future<Story> story;
+  late Future<Story?> story;
 
   final replyListViewController = ScrollController();
   final commentPageViewController = PageController();
@@ -101,9 +102,9 @@ class _DetailScreenState extends State<DetailScreen> {
           softWrap: true,
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 32.0, horizontal: 22.0),
-            child: FutureBuilder<Story>(
+            child: FutureBuilder<Story?>(
               builder: (context, snapshot) {
-                if (snapshot.hasData) {
+                if (snapshot.hasData && snapshot.data != null) {
                   Story storyData = snapshot.data as Story;
                   return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,15 +150,25 @@ class _DetailScreenState extends State<DetailScreen> {
                             SingleChildScrollView(
                               physics: BouncingScrollPhysics(),
                               child: Column(children: [
-                                storyData.content.isNotEmpty ?
-                                Padding(
-                                  padding: EdgeInsets.only(bottom: 24.0, top: 12.0),
-                                  child: Column(
-                                    children: [
-                                      Text(storyData.content),
-                                      Divider(color: Colors.grey[500]),
-                                    ],
-                                  )) : SizedBox.shrink(),
+                                storyData.content.isNotEmpty
+                                    ? Padding(
+                                        padding: EdgeInsets.only(
+                                            bottom: 24.0, top: 12.0),
+                                        child: Column(
+                                          children: [
+                                            Html(
+                                              data: storyData.content,
+                                              onLinkTap:
+                                                  (String? link, _, __, ___) {
+                                                if (link != null) {
+                                                  launchUrl(Uri.parse(link));
+                                                }
+                                              },
+                                            ),
+                                            Divider(color: Colors.grey[500]),
+                                          ],
+                                        ))
+                                    : SizedBox.shrink(),
                                 for (final commentId in storyData.commentIds)
                                   CommentWidget(
                                     commentId: commentId,
@@ -176,16 +187,15 @@ class _DetailScreenState extends State<DetailScreen> {
                                       if (snapshot.hasData) {
                                         Comment comment =
                                             snapshot.data as Comment;
-                                        // todo: implement swipe to back previous comment (history list to pageview)
-                                        // todo: add ask & show hn's text
                                         return Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
                                             CupertinoButton(
-                                                child: Icon(
-                                                  CupertinoIcons.back,
-                                                  color: Colors.blue[600],
+                                                child: Text(
+                                                  "<  Reply",
+                                                  style: TextStyle(
+                                                      color: Colors.blue[600]),
                                                 ),
                                                 onPressed: () {
                                                   _popCommentHistory();
@@ -201,8 +211,13 @@ class _DetailScreenState extends State<DetailScreen> {
                                                   replyButtonEnabled: false,
                                                 ),
                                                 Divider(
-                                                  color: Colors.grey[600],
+                                                  color: Colors.grey[100],
+                                                  height: 12.0,
                                                 ),
+                                                Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 8.0)),
                                                 for (final commentId
                                                     in comment.commentIds)
                                                   CommentWidget(

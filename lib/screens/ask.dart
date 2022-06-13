@@ -7,14 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:news/models/story.dart';
 import 'package:news/widgets/itemWidget.dart';
 
-class AllScreen extends StatefulWidget {
-  const AllScreen({Key? key}) : super(key: key);
+class AskScreen extends StatefulWidget {
+  const AskScreen({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _AllScreenState();
+  State<StatefulWidget> createState() => _AskScreenState();
 }
 
-class _AllScreenState extends State<AllScreen> {
+class _AskScreenState extends State<AskScreen> {
   late Stream<Story> topStoryStream;
   bool isFetchingMore = false;
 
@@ -54,7 +54,7 @@ class _AllScreenState extends State<AllScreen> {
   }
 
   void _addStoryFromStream(int? count) {
-    topStoryStream = fetchTopStories(count: count);
+    topStoryStream = fetchAsks(count: count);
     topStoryStream.listen((story) => setState(() {
           stories[story.id] = story;
         }));
@@ -80,7 +80,7 @@ class _AllScreenState extends State<AllScreen> {
                     alignment: Alignment.topLeft,
                     padding: EdgeInsets.only(top: 42.0, bottom: 12.0),
                     child: Text(
-                      "Hacker News",
+                      "Ask HN",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 32.0,

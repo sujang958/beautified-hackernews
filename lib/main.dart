@@ -3,6 +3,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:news/screens/all.dart';
+import 'package:news/screens/ask.dart';
 import 'package:news/screens/setting.dart';
 
 void main() {
@@ -59,6 +60,15 @@ class _HomeScreenState extends State<HomeScreen> {
         tabBuilder: (BuildContext context, int index) => CupertinoTabView(
             builder: (context) => DefaultTextStyle(
                 style: TextStyle(color: Colors.white, fontFamily: "Pretendard"),
-                child: index == 3 ? SettingScreen() : AllScreen())));
+                child: ((int index) {
+                  switch (index) {
+                    case 0:
+                      return AllScreen();
+                    case 1:
+                      return AskScreen();
+                    default:
+                      return SettingScreen();
+                  }
+                })(index))));
   }
 }

@@ -7,6 +7,7 @@ import 'abstract/item.dart';
 
 const topStoriesUri = 'https://hacker-news.firebaseio.com/v0/topstories.json';
 const storyUri = 'https://hacker-news.firebaseio.com/v0/item';
+const asksUri = 'https://hacker-news.firebaseio.com/v0/askstories.json';
 
 class Story extends Item {
   @override
@@ -29,7 +30,6 @@ class Story extends Item {
   }) : super(id: id, by: by, time: time);
 
   factory Story.fromJson(Map<String, dynamic> json) {
-    print(json);
     return Story(
       content: json['text'] ?? '',
       id: json['id'],
@@ -52,24 +52,43 @@ Stream<Story> fetchTopStories({int? count}) async* {
 
   final List<dynamic> topStoryIds = jsonDecode(topStoryResponse.body);
 
-  final storyResponses = await Future.wait(topStoryIds
-      .take(count ?? 20)
-      .map((id) => http.get(Uri.parse('$storyUri/$id.json'))));
+  final storyResponses = await Future.wait(
+      topStoryIds.take(count ?? 20).map((id) => fetchStory(id: id)));
 
-  for (final story in storyResponses
-      .map((response) => jsonDecode(response.body))
-      .where((item) => item['type'] == "story")
-      .where((item) => item['deleted'] == null || item['deleted'] == false)) {
-    yield Story.fromJson(story);
+  for (final story in storyResponses.where((item) => item != null)) {
+    yield story as Story;
   }
 }
 
-Future<Story> fetchStory({required int id}) async {
+Future<Story?> fetchStory({required int id}) async {
   final storyResponse = await http.get(Uri.parse('$storyUri/$id.json'));
 
   if (storyResponse.statusCode >= 400) {
     throw Exception("Can't fetch stories!");
   }
 
-  return Story.fromJson(jsonDecode(storyResponse.body));
+  final json = jsonDecode(storyResponse.body);
+  if (json['deleted'] != null && json['deleted'] == true) {
+    return null;
+  }
+
+  return Story.fromJson(json);
+}
+
+Stream<Story> fetchAsks({int? count}) async* {
+  final listResponse = await http.get(Uri.parse('$asksUri'));
+
+  if (listResponse.statusCode >= 400) {
+    throw Exception("Can't fetch ask stories1");
+  }
+
+  final listJson = jsonDecode(listResponse.body) as List<dynamic>;
+
+  final responses = await Future.wait(
+      listJson.take(count ?? 18).map((id) => fetchStory(id: id)));
+
+  for (final story in responses
+      .where((story) => story != null)) {
+    yield story as Story;
+  }
 }

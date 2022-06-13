@@ -37,9 +37,10 @@ class _SettingScreenState extends State<SettingScreen> {
                                 behavior: HitTestBehavior.translucent,
                                 onTap: () {
                                   showLicensePage(
-                                    context: context,
-                                    applicationIcon: Icon(CupertinoIcons.news),
-                                    applicationVersion: "v1.0.0");
+                                      context: context,
+                                      applicationIcon:
+                                          Icon(CupertinoIcons.news),
+                                      applicationVersion: "v1.0.0");
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
